@@ -12,9 +12,5 @@ prost-types = "0.5"
 bytes = "0.4"
 futures = "0.1"
 
-[lib]
-name = "orbital_api"
-path = "mod.rs"
-
 [build-dependencies]
 tower-grpc-build = {version = "0.1", features = ["tower-hyper"]}

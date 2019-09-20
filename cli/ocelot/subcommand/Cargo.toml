@@ -12,8 +12,8 @@ clap = "2.33"
 ocelot_api = { path = "../../../models/ocelot_api" }
 
 # For build
-git2 = "0.9"
-git_meta = { path = "../git_meta" }
+#git2 = "0.9"
+git_meta = { path = "../../../git_meta" }
 itertools = "0.8"
 
 http = "0.1"

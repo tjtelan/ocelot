@@ -3,47 +3,68 @@ extern crate structopt;
 
 extern crate clap;
 
-use clap::arg_enum;
 use structopt::StructOpt;
 
+use command;
+
 // This is for autocompletion
-use structopt::clap::Shell;
+//use structopt::clap::Shell;
 
-use tower_grpc::{Request, Response};
-use futures::{future, Future, Stream};
-
-use orbital_api::orbital_api::builder::{server, BuildSummary, BuildLogResponse, BuildDeleteRequest};
-
-#[derive(Clone, Debug)]
-struct OrbitalApi;
-
-impl orbital_api::orbital_api::builder::server::BuildService for OrbitalApi {
-    type StartBuildFuture = future::FutureResult<Response<BuildSummary>, tower_grpc::Status>;
-    type StopBuildFuture = future::FutureResult<Response<BuildSummary>, tower_grpc::Status>;
-    type GetBuildLogsFuture = future::FutureResult<Response<BuildLogResponse>, tower_grpc::Status>;
-    type DeleteBuildFuture = future::FutureResult<Response<BuildSummary>, tower_grpc::Status>;
-
-    fn start_build(&mut self, request: Request<orbital_api::orbital_api::builder::BuildStartRequest>) -> Self::StartBuildFuture {
-        unimplemented!();
-    }
-
-    fn stop_build(&mut self, request: Request<orbital_api::orbital_api::builder::BuildStopRequest>) -> Self::StopBuildFuture {
-        unimplemented!();
-    }
-
-
-    fn get_build_logs(&mut self, request: Request<orbital_api::orbital_api::builder::BuildLogRequest>) -> Self::GetBuildLogsFuture {
-        unimplemented!();
-    }
-
-
-    fn delete_build(&mut self, request: Request<orbital_api::orbital_api::builder::BuildDeleteRequest>) -> Self::DeleteBuildFuture {
-        unimplemented!();
-    }
-
+#[derive(Debug, StructOpt)]
+#[structopt(rename_all = "kebab_case")]
+pub enum Command {
+    // Send build signal
+    Build,
+    // Send cancel signal
+    Cancel,
+    // Get logs
+    Logs,
+    // Actions for Organizations
+    Org,
+    // Actions for Repos
+    Repo,
+    // Actions for Polling
+    Poll,
+    // Do things with secrets for builds
+    Secret,
+    // Get summary of a repo
+    Summary,
+    // Administration and service settings
+    Operator,
+    // Get version string
+    Version,
 }
 
+#[derive(Debug, StructOpt)]
+#[structopt(name = "orb")]
+pub struct ApplicationArguments {
+    #[structopt(subcommand)]
+    pub command: Command,
+}
 
 fn main() {
-    unimplemented!()
+    // generate `bash` completions in "target" directory
+    //ApplicationArguments::clap().gen_completions(env!("CARGO_PKG_NAME"), Shell::Bash, "target");
+
+    let matches = ApplicationArguments::from_args();
+
+    // Do stuff with the optional args
+
+    // TODO: Add in logic for getting backend connection info to pass into the subcommand handlers
+    // TODO: Subcommands should all return a Result<T>
+
+    // Pass to the subcommand handlers
+    match matches.command {
+        Command::Build => {}, 
+        Command::Cancel => {},
+        Command::Logs => {},
+        Command::Org => {},
+        Command::Repo => {},
+        Command::Poll => {},
+        Command::Repo => {},
+        Command::Secret => {},
+        Command::Summary => {},
+        Command::Operator => {},
+        Command::Version => {},
+    }
 }
