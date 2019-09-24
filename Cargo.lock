@@ -134,6 +134,10 @@ dependencies = [
 [[package]]
 name = "command"
 version = "0.1.0"
+dependencies = [
+ "git_meta 0.1.0",
+ "structopt 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "crossbeam-deque"

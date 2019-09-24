@@ -31,6 +31,9 @@ pub enum Command {
     Summary,
     // Administration and service settings
     Operator,
+    // Developer level commands and settings
+    #[structopt(alias="dev")]
+    Developer,
     // Get version string
     Version,
 }
@@ -61,10 +64,10 @@ fn main() {
         Command::Org => {},
         Command::Repo => {},
         Command::Poll => {},
-        Command::Repo => {},
         Command::Secret => {},
         Command::Summary => {},
         Command::Operator => {},
+        Command::Developer => {},
         Command::Version => {},
     }
 }
