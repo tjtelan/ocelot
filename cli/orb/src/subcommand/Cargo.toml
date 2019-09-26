@@ -1,5 +1,5 @@
 [package]
-name = "command"
+name = "orbital_subcommand"
 version = "0.1.0"
 authors = ["T.J. Telan <t.telan@gmail.com>"]
 edition = "2018"
@@ -12,5 +12,5 @@ git_meta = { path = "../../../../git_meta" }
 
 
 [lib]
-name = "command"
+name = "subcommand"
 path = "mod.rs"

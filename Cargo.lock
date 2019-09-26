@@ -132,14 +132,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "command"
-version = "0.1.0"
-dependencies = [
- "git_meta 0.1.0",
- "structopt 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "crossbeam-deque"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -616,9 +608,9 @@ version = "0.1.0"
 dependencies = [
  "bytes 0.4.12 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "command 0.1.0",
  "futures 0.1.29 (registry+https://github.com/rust-lang/crates.io-index)",
  "orbital_api 0.1.0",
+ "orbital_subcommand 0.1.0",
  "prost 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "prost-types 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "service 0.1.0",
@@ -638,6 +630,14 @@ dependencies = [
  "tower-grpc 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tower-grpc-build 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tower-hyper 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "orbital_subcommand"
+version = "0.1.0"
+dependencies = [
+ "git_meta 0.1.0",
+ "structopt 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
