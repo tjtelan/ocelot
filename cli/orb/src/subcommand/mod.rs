@@ -13,11 +13,37 @@ pub mod summary;
 pub mod operator;
 pub mod developer;
 
+use std::error::Error;
+use std::fmt;
+
+#[derive(Debug)]
+pub struct SubcommandError {
+    details: String,
+}
+
+impl SubcommandError {
+    pub fn new(msg: &str) -> SubcommandError {
+        SubcommandError{details: msg.to_string()}
+    }
+}
+
+impl fmt::Display for SubcommandError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f,"{}",self.details)
+    }
+}
+
+impl Error for SubcommandError {
+    fn description(&self) -> &str {
+        &self.details
+    }
+}
+
 #[derive(Debug, StructOpt)]
 #[structopt(rename_all = "kebab_case")]
-pub enum SubCommand {
+pub enum Subcommand {
     /// Send build signal
-    Build(build_cmd::SubCommandOption),
+    Build(build_cmd::SubcommandOption),
     /// Send cancel signal
     Cancel,
     /// Get logs
@@ -36,7 +62,7 @@ pub enum SubCommand {
     Operator,
     /// Developer level commands and settings
     #[structopt(alias="dev")]
-    Developer,
+    Developer(developer::DeveloperType),
     /// Get version string
     Version,
 }
@@ -48,9 +74,9 @@ pub struct GlobalOption {
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "orb")]
-pub struct ApplicationArguments {
+pub struct SubcommandContext {
     #[structopt(subcommand)]
-    pub subcommand: SubCommand,
+    pub subcommand: Subcommand,
     #[structopt(flatten)]
     pub global_option : GlobalOption,
 }
