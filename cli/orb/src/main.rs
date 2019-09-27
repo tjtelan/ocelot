@@ -38,4 +38,5 @@ fn main() -> Result<(), SubcommandError> {
             Ok(())
         }
     }
+
 }
