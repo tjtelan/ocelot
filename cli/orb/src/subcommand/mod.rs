@@ -12,6 +12,7 @@ pub mod secret;
 pub mod summary;
 pub mod operator;
 pub mod developer;
+pub mod completion;
 
 use std::error::Error;
 use std::fmt;
@@ -65,6 +66,8 @@ pub enum Subcommand {
     Developer(developer::DeveloperType),
     /// Get version string
     Version,
+    /// Generate shell completions script for orb command
+    Completion(completion::SubcommandOption),
 }
 
 #[derive(Debug, StructOpt)]

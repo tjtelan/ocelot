@@ -1,17 +1,11 @@
 use structopt::StructOpt;
 
 extern crate clap;
+use std::io;
 
-use subcommand::{self, SubcommandContext, Subcommand, SubcommandError};
+use subcommand::{self, GlobalOption, SubcommandContext, Subcommand, SubcommandError};
 
-// This is for autocompletion
-//use structopt::clap::Shell;
-
-// TODO: Create top-level error type to share between services and subcommands
 fn main() -> Result<(), SubcommandError> {
-    // generate `bash` completions in "target" directory
-    //ApplicationArguments::clap().gen_completions(env!("CARGO_PKG_NAME"), Shell::Bash, "target");
-
     let parsed = SubcommandContext::from_args();
 
     // Pass to the subcommand handlers
@@ -27,6 +21,10 @@ fn main() -> Result<(), SubcommandError> {
         Subcommand::Operator => Err(SubcommandError::new("Not yet implemented")),
         Subcommand::Developer(sub_command) => subcommand::developer::subcommand_handler(parsed.global_option, sub_command), 
         Subcommand::Version => Err(SubcommandError::new("Not yet implemented")),
+        Subcommand::Completion(shell) => {
+            GlobalOption::clap().gen_completions_to(env!("CARGO_PKG_NAME"), shell.into(), &mut io::stdout());
+            Ok(())
+        },
     }
 
 }
