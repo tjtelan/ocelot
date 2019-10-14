@@ -5,11 +5,8 @@
 use git2::{Branch, BranchType, Branches, Commit, ObjectType, Reference, Repository, Tree};
 use url::{Host, Url};
 
-pub fn get_local_repo_from_path(path: &str) -> Repository {
-    match Repository::open(path) {
-        Ok(repo) => repo,
-        Err(e) => panic!("failed to init: {}", e),
-    }
+pub fn get_local_repo_from_path(path: &str) -> Result<Repository, git2::Error> {
+    Repository::open(path)
 }
 
 // Clean this up with stronger types later
@@ -22,18 +19,17 @@ pub struct GitCommitContext {
     pub repo: String,
 }
 
-// TODO: Implement an error type so this can return a Result
 pub fn get_git_info_from_path(
     path: &str,
     branch: &Option<String>,
     commit_id: &Option<String>,
-) -> GitCommitContext {
+) -> Result<GitCommitContext, git2::Error> {
     // Our return struct
     let mut commit = GitCommitContext::default();
 
     // First we open the repository and get the remote_url and parse it into components
-    let local_repo = get_local_repo_from_path(path);
-    let remote_info = git_remote_url_parse(&git_remote_from_repo(&local_repo));
+    let local_repo = get_local_repo_from_path(path)?;
+    let remote_info = git_remote_url_parse(&git_remote_from_repo(&local_repo)?);
 
     // TODO: Do this in two stages, we could support passing a remote branch, and then fall back to a local branch
     // Assuming we are passed a local branch from remote "origin", or nothing.
@@ -46,35 +42,34 @@ pub fn get_git_info_from_path(
     commit.provider = remote_info.provider;
     commit.account = remote_info.account;
     commit.repo = remote_info.repo;
-    commit.branch = working_branch.unwrap().name().unwrap().unwrap().to_string();
-    commit.id = format!("{}", working_commit.unwrap().id());
+    commit.branch = working_branch?
+        .name()?
+        .expect("Unable to extract branch name")
+        .to_string();
+    commit.id = format!("{}", working_commit?.id());
 
-    commit
+    Ok(commit)
 }
 
-// FIXME: This should return a Result
-pub fn git_remote_from_path(path: &str) -> String {
-    let r = get_local_repo_from_path(path);
+pub fn git_remote_from_path(path: &str) -> Result<String, git2::Error> {
+    let r = get_local_repo_from_path(path)?;
     let remote_url: String = r
-        .find_remote("origin")
-        .unwrap()
+        .find_remote("origin")?
         .url()
-        .unwrap()
+        .expect("Unable to extract repo url from remote")
         .chars()
         .collect();
-    remote_url
+    Ok(remote_url)
 }
 
-// FIXME: This should return a Result
-pub fn git_remote_from_repo(local_repo: &Repository) -> String {
+pub fn git_remote_from_repo(local_repo: &Repository) -> Result<String, git2::Error> {
     let remote_url: String = local_repo
-        .find_remote("origin")
-        .unwrap()
+        .find_remote("origin")?
         .url()
-        .unwrap()
+        .expect("Unable to extract repo url from remote")
         .chars()
         .collect();
-    remote_url
+    Ok(remote_url)
 }
 
 #[derive(Debug)]
@@ -85,7 +80,6 @@ pub struct GitSshRemote {
     repo: String,
 }
 
-// FIXME: This should return a Result
 pub fn git_remote_url_parse(remote_url: &str) -> GitSshRemote {
     // TODO: We will want to see if we can parse w/ Url, since git repos might use HTTPS
     //let http_url = Url::parse(remote_url);
@@ -121,7 +115,7 @@ pub fn get_working_branch<'repo>(
     match local_branch {
         Some(branch) => {
             //println!("User passed branch: {:?}", branch);
-            let b = r.find_branch(&branch, BranchType::Local).unwrap();
+            let b = r.find_branch(&branch, BranchType::Local)?;
             println!("Returning given branch: {:?}", &b.name());
             Ok(b)
         }
@@ -132,10 +126,15 @@ pub fn get_working_branch<'repo>(
             //println!("{:?}", commit);
 
             // Find the current local branch...
-            let local_branch = Branch::wrap(r.head().unwrap());
+            let local_branch = Branch::wrap(r.head()?);
 
-            println!("Returning HEAD branch: {:?}", local_branch.name().unwrap());
-            r.find_branch(local_branch.name().unwrap().unwrap(), BranchType::Local)
+            println!("Returning HEAD branch: {:?}", local_branch.name()?);
+            r.find_branch(
+                local_branch
+                    .name()?
+                    .expect("Unable to return local branch name"),
+                BranchType::Local,
+            )
 
             //r.find_branch(&"master", BranchType::Local)
         }
@@ -143,16 +142,25 @@ pub fn get_working_branch<'repo>(
 }
 
 pub fn is_commit_in_branch<'repo>(r: &'repo Repository, commit: &Commit, branch: &Branch) -> bool {
-    let branch_head = branch.get().peel_to_commit().unwrap();
+    let mut branch_head = branch.get().peel_to_commit();
 
+    if branch_head.is_err() {
+        return false;
+    }
+
+    let branch_head = branch_head.unwrap();
     if branch_head.id() == commit.id() {
         return true;
     }
 
-    let is_commit_in_branch = r.graph_descendant_of(branch_head.id(), commit.id());
+    let check_commit_in_branch = r.graph_descendant_of(branch_head.id(), commit.id());
     //println!("is {:?} a decendent of {:?}: {:?}", &commit.id(), &branch_head.id(), is_commit_in_branch);
 
-    is_commit_in_branch.unwrap()
+    if check_commit_in_branch.is_err() {
+        return false;
+    }
+
+    check_commit_in_branch.unwrap()
 }
 
 pub fn get_target_commit<'repo>(
@@ -160,15 +168,17 @@ pub fn get_target_commit<'repo>(
     branch: &Option<String>,
     commit_id: &Option<String>,
 ) -> Result<Commit<'repo>, git2::Error> {
-    let working_branch = get_working_branch(r, branch).unwrap();
+    let working_branch = get_working_branch(r, branch)?;
     let working_ref = working_branch.into_reference();
 
     match commit_id {
         Some(id) => {
-            let oid = git2::Oid::from_str(id).unwrap();
+            let oid = git2::Oid::from_str(id)?;
 
-            let obj = r.find_object(oid, ObjectType::from_str("commit")).unwrap();
-            let commit = obj.into_commit().unwrap();
+            let obj = r.find_object(oid, ObjectType::from_str("commit"))?;
+            let commit = obj
+                .into_commit()
+                .expect("Unable to convert commit id into commit object");
 
             let _ = is_commit_in_branch(r, &commit, &Branch::wrap(working_ref));
 
@@ -176,7 +186,9 @@ pub fn get_target_commit<'repo>(
         }
         // We want the HEAD of the working branch
         None => {
-            let commit = working_ref.peel_to_commit().unwrap();
+            let commit = working_ref
+                .peel_to_commit()
+                .expect("Unable to retrieve HEAD commit object from working branch");
 
             let _ = is_commit_in_branch(r, &commit, &Branch::wrap(working_ref));
 
