@@ -148,10 +148,12 @@ pub fn is_commit_in_branch<'repo>(r: &'repo Repository, commit: &Commit, branch:
         return false;
     }
 
-    let branch_head = branch_head.unwrap();
+    let branch_head = branch_head.expect("Unable to extract branch HEAD commit");
     if branch_head.id() == commit.id() {
         return true;
     }
+
+    // We get here if we're not working with HEAD commits, and we gotta dig deeper
 
     let check_commit_in_branch = r.graph_descendant_of(branch_head.id(), commit.id());
     //println!("is {:?} a decendent of {:?}: {:?}", &commit.id(), &branch_head.id(), is_commit_in_branch);
@@ -160,7 +162,7 @@ pub fn is_commit_in_branch<'repo>(r: &'repo Repository, commit: &Commit, branch:
         return false;
     }
 
-    check_commit_in_branch.unwrap()
+    check_commit_in_branch.expect("Unable to determine if commit exists within branch")
 }
 
 pub fn get_target_commit<'repo>(
