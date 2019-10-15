@@ -25,6 +25,4 @@ pub fn subcommand_handler(
     }
 
     Ok(())
-    //let git_commit_context =
-    //Err(SubcommandError::new("Not yet implemented"))
 }

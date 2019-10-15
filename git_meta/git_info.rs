@@ -2,8 +2,7 @@
 
 // Get as much info about the remote branch as well
 
-use git2::{Branch, BranchType, Branches, Commit, ObjectType, Reference, Repository, Tree};
-use url::{Host, Url};
+use git2::{Branch, BranchType, Commit, ObjectType, Repository};
 
 pub fn get_local_repo_from_path(path: &str) -> Result<Repository, git2::Error> {
     Repository::open(path)
@@ -81,8 +80,9 @@ pub struct GitSshRemote {
 }
 
 // FIXME: This parser fails to select the correct account and repo names on azure ssh repo uris. Off by one
-// Example: git@ssh.dev.azure.com:v3/cvtec/cvtec/desklessworkers-admin
-///
+// Example
+// ssh: git@ssh.dev.azure.com:v3/organization/project/repo
+// http: https://organization@dev.azure.com/organization/project/_git/repo
 pub fn git_remote_url_parse(remote_url: &str) -> GitSshRemote {
     // TODO: We will want to see if we can parse w/ Url, since git repos might use HTTPS
     //let http_url = Url::parse(remote_url);
@@ -96,7 +96,7 @@ pub fn git_remote_url_parse(remote_url: &str) -> GitSshRemote {
     let user_provider = split_first_stage[0].split("@").collect::<Vec<&str>>();
     let acct_repo = split_first_stage[1].split("/").collect::<Vec<&str>>();
 
-    let mut repo_parsed = acct_repo[1].to_string();
+    let repo_parsed = acct_repo[1].to_string();
     let repo_parsed = repo_parsed.split(".git").collect::<Vec<&str>>();
 
     GitSshRemote {
@@ -129,7 +129,7 @@ pub fn get_working_branch<'repo>(
             //println!("{:?}", commit);
 
             // Find the current local branch...
-            let local_branch = Branch::wrap(r.head()?);
+            let local_branch = Branch::wrap(head?);
 
             println!("Returning HEAD branch: {:?}", local_branch.name()?);
             r.find_branch(
@@ -145,7 +145,7 @@ pub fn get_working_branch<'repo>(
 }
 
 pub fn is_commit_in_branch<'repo>(r: &'repo Repository, commit: &Commit, branch: &Branch) -> bool {
-    let mut branch_head = branch.get().peel_to_commit();
+    let branch_head = branch.get().peel_to_commit();
 
     if branch_head.is_err() {
         return false;

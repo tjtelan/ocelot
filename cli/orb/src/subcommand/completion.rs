@@ -1,11 +1,8 @@
 extern crate structopt;
-use std::io;
 use structopt::StructOpt;
 
 extern crate clap;
 use structopt::clap::arg_enum;
-
-use crate::{GlobalOption, SubcommandError};
 
 // Copied definition from https://docs.rs/clap/2.33.0/clap/enum.Shell.html
 
