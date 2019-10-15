@@ -11,6 +11,9 @@ pub struct SubcommandOption {
     path: Option<String>,
 }
 
-pub fn subcommand_handler(_global_option : GlobalOption, _local_option : SubcommandOption) -> Result<(), SubcommandError> {
+pub fn subcommand_handler(
+    _global_option: GlobalOption,
+    _local_option: SubcommandOption,
+) -> Result<(), SubcommandError> {
     Err(SubcommandError::new("Not yet implemented"))
 }

@@ -7,10 +7,14 @@ pub mod git;
 #[derive(Debug, StructOpt)]
 #[structopt(rename_all = "kebab_case")]
 pub enum DeveloperType {
-    Git(git::SubcommandOption)
+    Git(git::SubcommandOption),
 }
 
-
-pub fn subcommand_handler(_global_option : GlobalOption, dev_subcommand : DeveloperType) -> Result<(), SubcommandError> {
-    Err(SubcommandError::new("Not yet implemented"))
+pub fn subcommand_handler(
+    global_option: GlobalOption,
+    dev_subcommand: DeveloperType,
+) -> Result<(), SubcommandError> {
+    match dev_subcommand {
+        DeveloperType::Git(sub_option) => git::subcommand_handler(global_option, sub_option),
+    }
 }

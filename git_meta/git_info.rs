@@ -80,6 +80,9 @@ pub struct GitSshRemote {
     repo: String,
 }
 
+// FIXME: This parser fails to select the correct account and repo names on azure ssh repo uris. Off by one
+// Example: git@ssh.dev.azure.com:v3/cvtec/cvtec/desklessworkers-admin
+///
 pub fn git_remote_url_parse(remote_url: &str) -> GitSshRemote {
     // TODO: We will want to see if we can parse w/ Url, since git repos might use HTTPS
     //let http_url = Url::parse(remote_url);

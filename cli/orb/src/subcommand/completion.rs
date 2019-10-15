@@ -1,6 +1,6 @@
 extern crate structopt;
-use structopt::StructOpt;
 use std::io;
+use structopt::StructOpt;
 
 extern crate clap;
 use structopt::clap::arg_enum;
@@ -24,11 +24,15 @@ arg_enum! {
 impl From<clap::Shell> for SubcommandOption {
     fn from(s: clap::Shell) -> Self {
         match s {
-            clap::Shell::Bash => SubcommandOption { shell : Shell::Bash },
-            clap::Shell::Fish => SubcommandOption { shell : Shell::Fish },
-            clap::Shell::Zsh => SubcommandOption { shell : Shell::Zsh },
-            clap::Shell::PowerShell => SubcommandOption { shell : Shell::PowerShell },
-            clap::Shell::Elvish => SubcommandOption { shell : Shell::Elvish },
+            clap::Shell::Bash => SubcommandOption { shell: Shell::Bash },
+            clap::Shell::Fish => SubcommandOption { shell: Shell::Fish },
+            clap::Shell::Zsh => SubcommandOption { shell: Shell::Zsh },
+            clap::Shell::PowerShell => SubcommandOption {
+                shell: Shell::PowerShell,
+            },
+            clap::Shell::Elvish => SubcommandOption {
+                shell: Shell::Elvish,
+            },
         }
     }
 }
@@ -36,15 +40,18 @@ impl From<clap::Shell> for SubcommandOption {
 impl From<SubcommandOption> for clap::Shell {
     fn from(s: SubcommandOption) -> Self {
         match s {
-            SubcommandOption { shell : Shell::Bash } => clap::Shell::Bash,
-            SubcommandOption { shell : Shell::Fish } => clap::Shell::Fish,
-            SubcommandOption { shell : Shell::Zsh } => clap::Shell::Zsh ,
-            SubcommandOption { shell : Shell::PowerShell } => clap::Shell::PowerShell,
-            SubcommandOption { shell : Shell::Elvish } => clap::Shell::Elvish,
+            SubcommandOption { shell: Shell::Bash } => clap::Shell::Bash,
+            SubcommandOption { shell: Shell::Fish } => clap::Shell::Fish,
+            SubcommandOption { shell: Shell::Zsh } => clap::Shell::Zsh,
+            SubcommandOption {
+                shell: Shell::PowerShell,
+            } => clap::Shell::PowerShell,
+            SubcommandOption {
+                shell: Shell::Elvish,
+            } => clap::Shell::Elvish,
         }
     }
 }
-
 
 #[derive(Debug, StructOpt)]
 #[structopt(rename_all = "kebab_case")]

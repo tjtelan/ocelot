@@ -4,15 +4,15 @@ use structopt::StructOpt;
 
 pub mod build_cmd;
 pub mod cancel;
+pub mod completion;
+pub mod developer;
 pub mod logs;
+pub mod operator;
 pub mod org;
-pub mod repo;
 pub mod poll;
+pub mod repo;
 pub mod secret;
 pub mod summary;
-pub mod operator;
-pub mod developer;
-pub mod completion;
 
 use std::error::Error;
 use std::fmt;
@@ -24,13 +24,15 @@ pub struct SubcommandError {
 
 impl SubcommandError {
     pub fn new(msg: &str) -> SubcommandError {
-        SubcommandError{details: msg.to_string()}
+        SubcommandError {
+            details: msg.to_string(),
+        }
     }
 }
 
 impl fmt::Display for SubcommandError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f,"{}",self.details)
+        write!(f, "{}", self.details)
     }
 }
 
@@ -62,7 +64,7 @@ pub enum Subcommand {
     /// Administration and service settings
     Operator,
     /// Developer level commands and settings
-    #[structopt(alias="dev")]
+    #[structopt(alias = "dev")]
     Developer(developer::DeveloperType),
     /// Get version string
     Version,
@@ -71,9 +73,7 @@ pub enum Subcommand {
 }
 
 #[derive(Debug, StructOpt)]
-pub struct GlobalOption {
-
-}
+pub struct GlobalOption {}
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "orb")]
@@ -81,5 +81,5 @@ pub struct SubcommandContext {
     #[structopt(subcommand)]
     pub subcommand: Subcommand,
     #[structopt(flatten)]
-    pub global_option : GlobalOption,
+    pub global_option: GlobalOption,
 }

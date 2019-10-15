@@ -1,7 +1,7 @@
 extern crate structopt;
 use structopt::StructOpt;
 
-//use git_meta::git_info;
+use git_meta::git_info;
 
 use crate::{GlobalOption, SubcommandError};
 
@@ -13,6 +13,15 @@ pub struct SubcommandOption {
     path: Option<String>,
 }
 
-pub fn subcommand_handler(_global_option : GlobalOption, _local_option : SubcommandOption) -> Result<(), SubcommandError> {
-    Err(SubcommandError::new("Not yet implemented"))
+pub fn subcommand_handler(
+    _global_option: GlobalOption,
+    local_option: SubcommandOption,
+) -> Result<(), SubcommandError> {
+    if let Some(path) = local_option.path {
+        println!("Git path: {:?}", git_info::get_git_info_from_path(&path, &None, &None));
+    }
+
+    Ok(())
+    //let git_commit_context =
+    //Err(SubcommandError::new("Not yet implemented"))
 }
