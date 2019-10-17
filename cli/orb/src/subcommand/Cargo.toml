@@ -10,7 +10,8 @@ edition = "2018"
 structopt = "0.3.2"
 clap = "2.33"
 git_meta = { path = "../../../../git_meta" }
-
+shiplift = "0.5"
+tokio = "0.1.22"
 
 [lib]
 name = "subcommand"
