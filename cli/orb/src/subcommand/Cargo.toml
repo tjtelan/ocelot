@@ -17,6 +17,11 @@ service = { path = "../service" } # TODO: Might want to rename this crate to a m
 tower-hyper = "0.1"
 futures = "0.1"
 log = "0.4"
+tower-grpc = "0.1"
+hyper = "0.12"
+http = "0.1"
+tower-request-modifier = { git = "https://github.com/tower-rs/tower-http" }
+tower-util = "0.1"
 
 [lib]
 name = "subcommand"
