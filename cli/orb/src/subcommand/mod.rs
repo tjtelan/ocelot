@@ -62,7 +62,8 @@ pub enum Subcommand {
     /// Get summary of a repo
     Summary,
     /// Administration and service settings
-    Operator,
+    #[structopt(alias = "ops")]
+    Operator(operator::OperatorType),
     /// Developer level commands and settings
     #[structopt(alias = "dev")]
     Developer(developer::DeveloperType),

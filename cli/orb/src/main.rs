@@ -20,7 +20,9 @@ fn main() -> Result<(), SubcommandError> {
         Subcommand::Poll => Err(SubcommandError::new("Not yet implemented")),
         Subcommand::Secret => Err(SubcommandError::new("Not yet implemented")),
         Subcommand::Summary => Err(SubcommandError::new("Not yet implemented")),
-        Subcommand::Operator => Err(SubcommandError::new("Not yet implemented")),
+        Subcommand::Operator(sub_command) => {
+            subcommand::operator::subcommand_handler(parsed.global_option, sub_command)
+        }
         Subcommand::Developer(sub_command) => {
             subcommand::developer::subcommand_handler(parsed.global_option, sub_command)
         }

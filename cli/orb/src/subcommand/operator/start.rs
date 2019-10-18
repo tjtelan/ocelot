@@ -1,8 +1,6 @@
 extern crate structopt;
 use structopt::StructOpt;
 
-use git_meta::git_info;
-
 use crate::{GlobalOption, SubcommandError};
 
 #[derive(Debug, StructOpt)]
@@ -17,14 +15,7 @@ pub fn subcommand_handler(
     _global_option: GlobalOption,
     local_option: SubcommandOption,
 ) -> Result<(), SubcommandError> {
-    if let Some(path) = local_option.path {
-        println!(
-            "Git path: {:?}",
-            git_info::get_git_info_from_path(&path, &None, &None)
-        );
-    }
 
+    println!("Placeholder. Start build service here.");
     Ok(())
-    //let git_commit_context =
-    //Err(SubcommandError::new("Not yet implemented"))
 }

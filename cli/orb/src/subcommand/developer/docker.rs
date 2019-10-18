@@ -1,6 +1,6 @@
 extern crate structopt;
-use structopt::StructOpt;
 use std::str::FromStr;
+use structopt::StructOpt;
 
 use shiplift::{
     builder::ContainerFilter, tty::StreamType, ContainerListOptions, ContainerOptions, Docker,
@@ -40,16 +40,12 @@ impl FromStr for Action {
     }
 }
 
-fn container_pull(image: Option<String>) -> Result<(),()> {
+fn container_pull(image: Option<String>) -> Result<(), ()> {
     let docker = Docker::new();
 
     let img = match image {
-        Some(i) => {
-            i
-        },
-        None => {
-            "alpine:latest".to_string()
-        }
+        Some(i) => i,
+        None => "alpine:latest".to_string(),
     };
 
     println!("Pulling image: {}", img);
@@ -70,14 +66,13 @@ pub fn subcommand_handler(
     _global_option: GlobalOption,
     local_option: SubcommandOption,
 ) -> Result<(), SubcommandError> {
-
     //container_pull(local_option.image);
 
     match local_option.action {
-        Action::Pull => { container_pull(local_option.image); },
-        Action::Create => { 
-            println!("Placeholder. Create container.")
+        Action::Pull => {
+            container_pull(local_option.image);
         }
+        Action::Create => println!("Placeholder. Create container."),
     }
     Ok(())
 }

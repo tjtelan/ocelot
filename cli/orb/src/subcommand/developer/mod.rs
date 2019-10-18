@@ -2,8 +2,8 @@ use structopt::StructOpt;
 
 use crate::{GlobalOption, SubcommandError};
 
-pub mod git;
 pub mod docker;
+pub mod git;
 
 #[derive(Debug, StructOpt)]
 #[structopt(rename_all = "kebab_case")]
