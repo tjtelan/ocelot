@@ -67,5 +67,5 @@ pub fn subcommand_handler(
 
     tokio::run(say_hello);
 
-    Err(SubcommandError::new("Not yet implemented"))
+    Ok(())
 }

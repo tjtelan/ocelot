@@ -15,8 +15,14 @@ impl orbital_api::builder::server::BuildService for OrbitalApi {
         &mut self,
         request: Request<orbital_api::builder::BuildStartRequest>,
     ) -> Self::StartBuildFuture {
-        println!("It works!");
-        unimplemented!();
+
+        let response = Response::new(
+            BuildSummary::default()
+        );
+
+        println!("DEBUG: {:?}", response);
+
+        future::ok(response)
     }
 
     fn stop_build(
