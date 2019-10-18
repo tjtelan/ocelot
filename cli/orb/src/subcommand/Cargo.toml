@@ -12,6 +12,11 @@ clap = "2.33"
 git_meta = { path = "../../../../git_meta" }
 shiplift = "0.5"
 tokio = "0.1.22"
+orbital_api = { path = "../../../../models/orbital_api" } # TODO: This is the generated proto headers
+service = { path = "../service" } # TODO: Might want to rename this crate to a more obvious name. This is the implementation of the orbital api
+tower-hyper = "0.1"
+futures = "0.1"
+log = "0.4"
 
 [lib]
 name = "subcommand"

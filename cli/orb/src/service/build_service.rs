@@ -3,7 +3,7 @@ use orbital_api::builder::{server, BuildDeleteRequest, BuildLogResponse, BuildSu
 use tower_grpc::{Request, Response};
 
 #[derive(Clone, Debug)]
-struct OrbitalApi;
+pub struct OrbitalApi;
 
 impl orbital_api::builder::server::BuildService for OrbitalApi {
     type StartBuildFuture = future::FutureResult<Response<BuildSummary>, tower_grpc::Status>;
