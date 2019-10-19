@@ -74,7 +74,15 @@ pub enum Subcommand {
 }
 
 #[derive(Debug, StructOpt)]
-pub struct GlobalOption {}
+#[structopt(rename_all = "kebab_case")]
+pub struct GlobalOption {
+    /// Verbose mode. Display extra debug logging
+    #[structopt(long)]
+    pub debug: bool,
+    /// Dry-run mode. No changes will be made
+    #[structopt(long)]
+    pub check: bool,
+}
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "orb")]

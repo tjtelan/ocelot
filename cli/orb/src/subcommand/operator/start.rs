@@ -6,9 +6,9 @@ use crate::{GlobalOption, SubcommandError};
 use futures::{future, Future, Stream};
 use service::build_service;
 
+use log::error;
 use tokio::net::TcpListener;
 use tower_hyper::server::{Http, Server};
-use log::error;
 
 #[derive(Debug, StructOpt)]
 #[structopt(rename_all = "kebab_case")]
@@ -22,9 +22,9 @@ pub fn subcommand_handler(
     _global_option: GlobalOption,
     local_option: SubcommandOption,
 ) -> Result<(), SubcommandError> {
-
     //let handler : build_service::OrbitalApi;
-    let new_service = orbital_api::builder::server::BuildServiceServer::new(build_service::OrbitalApi);
+    let new_service =
+        orbital_api::builder::server::BuildServiceServer::new(build_service::OrbitalApi);
     let mut server = Server::new(new_service);
     let http = Http::new().http2_only(true).clone();
     let addr = "[::1]:50051".parse().unwrap();

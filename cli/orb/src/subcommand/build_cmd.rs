@@ -25,7 +25,6 @@ pub fn subcommand_handler(
     _global_option: GlobalOption,
     _local_option: SubcommandOption,
 ) -> Result<(), SubcommandError> {
-
     let uri: http::Uri = format!("http://[::1]:50051").parse().unwrap();
 
     let dst = Destination::try_from_uri(uri.clone()).unwrap();
@@ -55,7 +54,7 @@ pub fn subcommand_handler(
                 remote_uri: "What is in a name?".to_string(),
                 branch: "What is in a name?".to_string(),
                 commit_ref: "What is in a name?".to_string(),
-                }))
+            }))
         })
         .and_then(|response| {
             println!("RESPONSE = {:?}", response);
