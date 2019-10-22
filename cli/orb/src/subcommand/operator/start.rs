@@ -4,7 +4,7 @@ use structopt::StructOpt;
 use crate::{GlobalOption, SubcommandError};
 
 use futures::{future, Future, Stream};
-use service::build_service;
+use orbital_services::build_service;
 
 use log::error;
 use tokio::net::TcpListener;
@@ -24,7 +24,7 @@ pub fn subcommand_handler(
 ) -> Result<(), SubcommandError> {
     //let handler : build_service::OrbitalApi;
     let new_service =
-        orbital_api::builder::server::BuildServiceServer::new(build_service::OrbitalApi);
+        orbital_headers::builder::server::BuildServiceServer::new(build_service::OrbitalApi);
     let mut server = Server::new(new_service);
     let http = Http::new().http2_only(true).clone();
     let addr = "[::1]:50051".parse().unwrap();

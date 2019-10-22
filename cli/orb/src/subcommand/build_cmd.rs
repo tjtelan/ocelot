@@ -3,7 +3,7 @@ use structopt::StructOpt;
 
 use crate::{GlobalOption, SubcommandError};
 
-use orbital_api::builder::{client, BuildDeleteRequest, BuildLogResponse, BuildSummary};
+use orbital_headers::builder::{client, BuildDeleteRequest, BuildLogResponse, BuildSummary};
 
 use futures::Future;
 use hyper::client::connect::{Destination, HttpConnector};
@@ -11,7 +11,7 @@ use tower_grpc::Request;
 use tower_hyper;
 use tower_util::MakeService;
 
-use service::build_service;
+use orbital_services::build_service;
 
 #[derive(Debug, StructOpt)]
 #[structopt(rename_all = "kebab_case")]
@@ -36,7 +36,7 @@ pub fn subcommand_handler(
         .make_service(dst)
         .map_err(|e| panic!("connect error: {:?}", e))
         .and_then(move |conn| {
-            use orbital_api::builder::client::BuildService;
+            use orbital_headers::builder::client::BuildService;
 
             let conn = tower_request_modifier::Builder::new()
                 .set_origin(uri)
@@ -48,7 +48,7 @@ pub fn subcommand_handler(
             BuildService::new(conn).ready()
         })
         .and_then(|mut client| {
-            use orbital_api::builder::BuildStartRequest;
+            use orbital_headers::builder::BuildStartRequest;
 
             client.start_build(Request::new(BuildStartRequest {
                 remote_uri: "What is in a name?".to_string(),

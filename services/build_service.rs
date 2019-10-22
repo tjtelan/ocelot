@@ -1,11 +1,11 @@
 use futures::{future, Future, Stream};
-use orbital_api::builder::{server, BuildDeleteRequest, BuildLogResponse, BuildSummary};
+use orbital_headers::builder::{server, BuildDeleteRequest, BuildLogResponse, BuildSummary};
 use tower_grpc::{Request, Response};
 
 #[derive(Clone, Debug)]
 pub struct OrbitalApi;
 
-impl orbital_api::builder::server::BuildService for OrbitalApi {
+impl orbital_headers::builder::server::BuildService for OrbitalApi {
     type StartBuildFuture = future::FutureResult<Response<BuildSummary>, tower_grpc::Status>;
     type StopBuildFuture = future::FutureResult<Response<BuildSummary>, tower_grpc::Status>;
     type GetBuildLogsFuture = future::FutureResult<Response<BuildLogResponse>, tower_grpc::Status>;
@@ -13,7 +13,7 @@ impl orbital_api::builder::server::BuildService for OrbitalApi {
 
     fn start_build(
         &mut self,
-        request: Request<orbital_api::builder::BuildStartRequest>,
+        request: Request<orbital_headers::builder::BuildStartRequest>,
     ) -> Self::StartBuildFuture {
         let response = Response::new(BuildSummary::default());
 
@@ -24,21 +24,21 @@ impl orbital_api::builder::server::BuildService for OrbitalApi {
 
     fn stop_build(
         &mut self,
-        request: Request<orbital_api::builder::BuildStopRequest>,
+        request: Request<orbital_headers::builder::BuildStopRequest>,
     ) -> Self::StopBuildFuture {
         unimplemented!();
     }
 
     fn get_build_logs(
         &mut self,
-        request: Request<orbital_api::builder::BuildLogRequest>,
+        request: Request<orbital_headers::builder::BuildLogRequest>,
     ) -> Self::GetBuildLogsFuture {
         unimplemented!();
     }
 
     fn delete_build(
         &mut self,
-        request: Request<orbital_api::builder::BuildDeleteRequest>,
+        request: Request<orbital_headers::builder::BuildDeleteRequest>,
     ) -> Self::DeleteBuildFuture {
         unimplemented!();
     }

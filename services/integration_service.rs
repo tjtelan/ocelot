@@ -1,5 +1,5 @@
 use futures::{future, Future, Stream};
-use orbital_api::integration::{
+use orbital_headers::integration::{
     server, NotifyIntegrationEntry, NotifyIntegrationListResponse, SecretIntegrationEntry,
     SecretIntegrationListResponse,
 };
@@ -8,7 +8,7 @@ use tower_grpc::{Request, Response};
 #[derive(Clone, Debug)]
 struct OrbitalApi;
 
-impl orbital_api::integration::server::IntegrationService for OrbitalApi {
+impl orbital_headers::integration::server::IntegrationService for OrbitalApi {
     type CreateSecretIntegrationFuture =
         future::FutureResult<Response<SecretIntegrationEntry>, tower_grpc::Status>;
     type DeleteSecretIntegrationFuture =
@@ -28,56 +28,56 @@ impl orbital_api::integration::server::IntegrationService for OrbitalApi {
 
     fn create_secret_integration(
         &mut self,
-        request: tower_grpc::Request<orbital_api::integration::SecretIntegrationCreateRequest>,
+        request: tower_grpc::Request<orbital_headers::integration::SecretIntegrationCreateRequest>,
     ) -> Self::CreateSecretIntegrationFuture {
         unimplemented!()
     }
 
     fn delete_secret_integration(
         &mut self,
-        request: tower_grpc::Request<orbital_api::integration::SecretIntegrationDeleteRequest>,
+        request: tower_grpc::Request<orbital_headers::integration::SecretIntegrationDeleteRequest>,
     ) -> Self::DeleteSecretIntegrationFuture {
         unimplemented!()
     }
 
     fn update_secret_integration(
         &mut self,
-        request: tower_grpc::Request<orbital_api::integration::SecretIntegrationUpdateRequest>,
+        request: tower_grpc::Request<orbital_headers::integration::SecretIntegrationUpdateRequest>,
     ) -> Self::UpdateSecretIntegrationFuture {
         unimplemented!()
     }
 
     fn list_secret_integrations(
         &mut self,
-        request: tower_grpc::Request<orbital_api::integration::SecretIntegrationListRequest>,
+        request: tower_grpc::Request<orbital_headers::integration::SecretIntegrationListRequest>,
     ) -> Self::ListSecretIntegrationsFuture {
         unimplemented!()
     }
 
     fn create_notify_integration(
         &mut self,
-        request: tower_grpc::Request<orbital_api::integration::NotifyIntegrationCreateRequest>,
+        request: tower_grpc::Request<orbital_headers::integration::NotifyIntegrationCreateRequest>,
     ) -> Self::CreateNotifyIntegrationFuture {
         unimplemented!()
     }
 
     fn delete_notify_integration(
         &mut self,
-        request: tower_grpc::Request<orbital_api::integration::NotifyIntegrationDeleteRequest>,
+        request: tower_grpc::Request<orbital_headers::integration::NotifyIntegrationDeleteRequest>,
     ) -> Self::DeleteNotifyIntegrationFuture {
         unimplemented!()
     }
 
     fn update_notify_integration(
         &mut self,
-        request: tower_grpc::Request<orbital_api::integration::NotifyIntegrationUpdateRequest>,
+        request: tower_grpc::Request<orbital_headers::integration::NotifyIntegrationUpdateRequest>,
     ) -> Self::UpdateNotifyIntegrationFuture {
         unimplemented!()
     }
 
     fn list_notify_integrations(
         &mut self,
-        request: tower_grpc::Request<orbital_api::integration::NotifyIntegrationListRequest>,
+        request: tower_grpc::Request<orbital_headers::integration::NotifyIntegrationListRequest>,
     ) -> Self::ListNotifyIntegrationsFuture {
         unimplemented!()
     }

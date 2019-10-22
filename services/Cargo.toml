@@ -1,5 +1,5 @@
 [package]
-name = "service"
+name = "orbital_services"
 version = "0.1.0"
 authors = ["T.J. Telan <t.telan@gmail.com>"]
 edition = "2018"
@@ -9,9 +9,9 @@ edition = "2018"
 [dependencies]
 tower-grpc = "0.1"
 futures = "0.1"
-orbital_api = { path = "../../../../models/orbital_api" }
+orbital_headers = { path = "../models/orbital_headers" }
 
 
 [lib]
-name = "service"
+name = "orbital_services"
 path = "mod.rs"

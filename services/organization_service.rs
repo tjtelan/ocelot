@@ -1,11 +1,11 @@
 use futures::{future, Future, Stream};
-use orbital_api::organization::{server, Org, PolledRepo, RegisteredRepo};
+use orbital_headers::organization::{server, Org, PolledRepo, RegisteredRepo};
 use tower_grpc::{Request, Response};
 
 #[derive(Clone, Debug)]
 struct OrbitalApi;
 
-impl orbital_api::organization::server::OrganizationService for OrbitalApi {
+impl orbital_headers::organization::server::OrganizationService for OrbitalApi {
     type RegisterOrgFuture = future::FutureResult<Response<Org>, tower_grpc::Status>;
     type EnableOrgFuture = future::FutureResult<Response<Org>, tower_grpc::Status>;
     type DisableOrgFuture = future::FutureResult<Response<Org>, tower_grpc::Status>;
@@ -19,49 +19,49 @@ impl orbital_api::organization::server::OrganizationService for OrbitalApi {
 
     fn register_org(
         &mut self,
-        request: tower_grpc::Request<orbital_api::organization::OrgRegisterRequest>,
+        request: tower_grpc::Request<orbital_headers::organization::OrgRegisterRequest>,
     ) -> Self::RegisterOrgFuture {
         unimplemented!()
     }
 
     fn enable_org(
         &mut self,
-        request: tower_grpc::Request<orbital_api::organization::OrgEnableRequest>,
+        request: tower_grpc::Request<orbital_headers::organization::OrgEnableRequest>,
     ) -> Self::EnableOrgFuture {
         unimplemented!()
     }
 
     fn disable_org(
         &mut self,
-        request: tower_grpc::Request<orbital_api::organization::OrgDisableRequest>,
+        request: tower_grpc::Request<orbital_headers::organization::OrgDisableRequest>,
     ) -> Self::DisableOrgFuture {
         unimplemented!()
     }
 
     fn delete_org(
         &mut self,
-        request: tower_grpc::Request<orbital_api::organization::OrgDeleteRequest>,
+        request: tower_grpc::Request<orbital_headers::organization::OrgDeleteRequest>,
     ) -> Self::DeleteOrgFuture {
         unimplemented!()
     }
 
     fn register_repo(
         &mut self,
-        request: tower_grpc::Request<orbital_api::organization::RepoRegisterRequest>,
+        request: tower_grpc::Request<orbital_headers::organization::RepoRegisterRequest>,
     ) -> Self::RegisterRepoFuture {
         unimplemented!()
     }
 
     fn update_repo_state(
         &mut self,
-        request: tower_grpc::Request<orbital_api::organization::RegisteredRepoUpdateStateRequest>,
+        request: tower_grpc::Request<orbital_headers::organization::RegisteredRepoUpdateStateRequest>,
     ) -> Self::UpdateRepoStateFuture {
         unimplemented!()
     }
 
     fn update_repo_uri(
         &mut self,
-        request: tower_grpc::Request<orbital_api::organization::RegisteredRepoUpdateUriRequest>,
+        request: tower_grpc::Request<orbital_headers::organization::RegisteredRepoUpdateUriRequest>,
     ) -> Self::UpdateRepoUriFuture {
         unimplemented!()
     }
@@ -69,7 +69,7 @@ impl orbital_api::organization::server::OrganizationService for OrbitalApi {
     fn poll_repo(
         &mut self,
         request: tower_grpc::Request<
-            orbital_api::organization::RepoRegisterPollingExpressionRequest,
+            orbital_headers::organization::RepoRegisterPollingExpressionRequest,
         >,
     ) -> Self::PollRepoFuture {
         unimplemented!()
@@ -77,7 +77,7 @@ impl orbital_api::organization::server::OrganizationService for OrbitalApi {
 
     fn update_repo_polling_state(
         &mut self,
-        request: tower_grpc::Request<orbital_api::organization::RepoUpdatePollingStateRequest>,
+        request: tower_grpc::Request<orbital_headers::organization::RepoUpdatePollingStateRequest>,
     ) -> Self::UpdateRepoPollingStateFuture {
         unimplemented!()
     }

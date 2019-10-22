@@ -1,5 +1,5 @@
 [package]
-name = "orbital_subcommand"
+name = "orbital_cli_subcommand"
 version = "0.1.0"
 authors = ["T.J. Telan <t.telan@gmail.com>"]
 edition = "2018"
@@ -9,11 +9,11 @@ edition = "2018"
 [dependencies]
 structopt = "0.3.2"
 clap = "2.33"
-git_meta = { path = "../../../../git_meta" }
+git_meta = { path = "../../../../lib/git_meta" }
 shiplift = "0.5"
 tokio = "0.1.22"
-orbital_api = { path = "../../../../models/orbital_api" } # TODO: This is the generated proto headers
-service = { path = "../service" } # TODO: Might want to rename this crate to a more obvious name. This is the implementation of the orbital api
+orbital_headers = { path = "../../../../models/orbital_headers" }
+orbital_services = { path = "../../../../services" }
 tower-hyper = "0.1"
 futures = "0.1"
 log = "0.4"
