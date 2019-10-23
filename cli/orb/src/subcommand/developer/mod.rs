@@ -5,6 +5,7 @@ use crate::{GlobalOption, SubcommandError};
 pub mod docker;
 pub mod git;
 pub mod local_build;
+pub mod validate;
 
 #[derive(Debug, StructOpt)]
 #[structopt(rename_all = "kebab_case")]
@@ -12,6 +13,7 @@ pub enum DeveloperType {
     Git(git::SubcommandOption),
     Docker(docker::SubcommandOption),
     Build(local_build::SubcommandOption),
+    Validate(validate::SubcommandOption),
 }
 
 pub fn subcommand_handler(
@@ -22,5 +24,6 @@ pub fn subcommand_handler(
         DeveloperType::Git(sub_option) => git::subcommand_handler(global_option, sub_option),
         DeveloperType::Docker(sub_option) => docker::subcommand_handler(global_option, sub_option),
         DeveloperType::Build(sub_option) => local_build::subcommand_handler(global_option, sub_option),
+        DeveloperType::Validate(sub_option) => validate::subcommand_handler(global_option, sub_option),
     }
 }

@@ -10,6 +10,7 @@ edition = "2018"
 structopt = "0.3.2"
 clap = "2.33"
 git_meta = { path = "../../../../lib/git_meta" }
+config_parser = { path = "../../../../lib/config_parser" }
 shiplift = "0.5"
 tokio = "0.1.22"
 orbital_headers = { path = "../../../../models/orbital_headers" }
