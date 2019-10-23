@@ -10,7 +10,7 @@ use crate::{GlobalOption, SubcommandError};
 pub struct SubcommandOption {
     /// Path to local repo. Defaults to current working directory
     // TODO: Change default value to PWD env var
-    #[structopt(long, default_value=".")]
+    #[structopt(long, default_value = ".")]
     path: String,
 
     /// Use the specified local branch
@@ -26,20 +26,14 @@ pub fn subcommand_handler(
     _global_option: GlobalOption,
     local_option: SubcommandOption,
 ) -> Result<(), SubcommandError> {
+    // Read options and validate against git repo
+    // Read orb.yml
 
-        // Read options and validate against git repo
-        // Read orb.yml
-
-
-
-
-
-        println!(
-            "Git path: {:?}\nInfo: {:?}",
-            &local_option.path[..],
-            git_info::get_git_info_from_path(&local_option.path[..], &None, &None)
-        );
+    println!(
+        "Git path: {:?}\nInfo: {:?}",
+        &local_option.path[..],
+        git_info::get_git_info_from_path(&local_option.path[..], &None, &None)
+    );
 
     Ok(())
 }
-

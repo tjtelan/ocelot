@@ -40,6 +40,11 @@ impl Error for SubcommandError {
     fn description(&self) -> &str {
         &self.details
     }
+
+    fn cause(&self) -> Option<&dyn Error> {
+        // Generic error, underlying cause isn't tracked.
+        None
+    }
 }
 
 #[derive(Debug, StructOpt)]

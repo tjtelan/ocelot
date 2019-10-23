@@ -23,7 +23,11 @@ pub fn subcommand_handler(
     match dev_subcommand {
         DeveloperType::Git(sub_option) => git::subcommand_handler(global_option, sub_option),
         DeveloperType::Docker(sub_option) => docker::subcommand_handler(global_option, sub_option),
-        DeveloperType::Build(sub_option) => local_build::subcommand_handler(global_option, sub_option),
-        DeveloperType::Validate(sub_option) => validate::subcommand_handler(global_option, sub_option),
+        DeveloperType::Build(sub_option) => {
+            local_build::subcommand_handler(global_option, sub_option)
+        }
+        DeveloperType::Validate(sub_option) => {
+            validate::subcommand_handler(global_option, sub_option)
+        }
     }
 }

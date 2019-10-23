@@ -13,14 +13,20 @@ pub struct SubcommandOption {
     path: Option<String>,
 }
 
+// TODO: Do we want to return the config?
 pub fn subcommand_handler(
     _global_option: GlobalOption,
     local_option: SubcommandOption,
 ) -> Result<(), SubcommandError> {
     if let Some(path) = local_option.path {
-        parser::load_orb_yaml(path);
-    }
+        match parser::load_orb_yaml(path) {
+            Ok(c) => Ok(()),
+            Err(e) => Err(SubcommandError::new("Config file failed validation"),
+        }
 
-    Ok(())
+    }
+    else {
+        Err(SubcommandError::new("No config file specified"))
+    }
 }
 
