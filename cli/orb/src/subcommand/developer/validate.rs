@@ -21,7 +21,7 @@ pub fn subcommand_handler(
     if let Some(path) = local_option.path {
         match parser::load_orb_yaml(path) {
             Ok(c) => Ok(()),
-            Err(e) => Err(SubcommandError::new("Config file failed validation"),
+            Err(e) => Err(SubcommandError::new("Config file failed validation")),
         }
 
     }
