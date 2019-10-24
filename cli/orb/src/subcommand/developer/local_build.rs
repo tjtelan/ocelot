@@ -2,6 +2,7 @@ extern crate structopt;
 use structopt::StructOpt;
 
 use git_meta::git_info;
+use config_parser::parser;
 
 use crate::{GlobalOption, SubcommandError};
 
@@ -34,6 +35,11 @@ pub fn subcommand_handler(
         &local_option.path[..],
         git_info::get_git_info_from_path(&local_option.path[..], &None, &None)
     );
+
+    // TODO: Will want ability to pass in any yaml.
+    // TODO: Also handle file being named orb.yaml
+    // Look for a file named orb.yml
+    let config = parser::load_orb_yaml(format!("{}{}", &local_option.path, "orb.yml"))?;
 
     Ok(())
 }

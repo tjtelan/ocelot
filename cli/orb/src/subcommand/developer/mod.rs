@@ -10,9 +10,13 @@ pub mod validate;
 #[derive(Debug, StructOpt)]
 #[structopt(rename_all = "kebab_case")]
 pub enum DeveloperType {
+    /// Test git repo metadata parser
     Git(git::SubcommandOption),
+    /// Test the docker driver
     Docker(docker::SubcommandOption),
+    /// Test running builds
     Build(local_build::SubcommandOption),
+    /// Test the config file parsers
     Validate(validate::SubcommandOption),
 }
 
