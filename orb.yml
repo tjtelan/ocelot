@@ -1,0 +1,4 @@
+image: docker
+command:
+  - echo Hello world!
+  - docker build -t orb .
