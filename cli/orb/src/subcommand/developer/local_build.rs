@@ -1,8 +1,9 @@
 extern crate structopt;
 use structopt::StructOpt;
 
-use git_meta::git_info;
 use config_parser::parser;
+use container_builder::docker;
+use git_meta::git_info;
 
 use crate::{GlobalOption, SubcommandError};
 
@@ -47,16 +48,26 @@ pub fn subcommand_handler(
     // docker create <image> sleep 2h
     // <output container id>
     // docker exec <container id> sh -c "<command>" (per list item)
-    
+
     // Though, honestly we will want a way to reference the shell we want, as well as commands with container-level env vars
     // We're going to still want to inject env vars into a build context
-    
+
     // Logs are still unclear. Am I going to poll on output from the exec?
     // <command> | tee -a /proc/1/fd/1 ?? This seems to give output in docker log, but not sure where the bounds of this are
     // Checked that `tee` is installed in ubuntu, centos, alpine, clearlinux, busybox
     // It seems that even if we're not root, we can print to /proc/1/fd/1
 
     // Instead of piping to tee, try to get /bin/sh to "give" pid1's stdout/stderr to the exec process./prod/1/fd/1/ or /dev/stdout but we'll need to determine the fd for pid 1
+
+    match docker::container_pull(Some(config.image.clone())) {
+        Ok(e) => e,
+        Err(_) => {
+            return Err(SubcommandError::new(&format!(
+                "Could not pull image {}",
+                &config.image
+            )))
+        }
+    };
 
     for command in config.command.iter() {
         println!("{:?}", command);

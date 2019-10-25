@@ -54,7 +54,9 @@ impl orbital_headers::organization::server::OrganizationService for OrbitalApi {
 
     fn update_repo_state(
         &mut self,
-        request: tower_grpc::Request<orbital_headers::organization::RegisteredRepoUpdateStateRequest>,
+        request: tower_grpc::Request<
+            orbital_headers::organization::RegisteredRepoUpdateStateRequest,
+        >,
     ) -> Self::UpdateRepoStateFuture {
         unimplemented!()
     }

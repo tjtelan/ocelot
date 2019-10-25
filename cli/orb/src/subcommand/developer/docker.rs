@@ -39,11 +39,17 @@ pub fn subcommand_handler(
     _global_option: GlobalOption,
     local_option: SubcommandOption,
 ) -> Result<(), SubcommandError> {
-    //container_pull(local_option.image);
-
     match local_option.action {
         Action::Pull => {
-            docker::container_pull(local_option.image);
+            match docker::container_pull(local_option.image.clone()) {
+                Ok(_) => return Ok(()),
+                Err(_) => {
+                    return Err(SubcommandError::new(&format!(
+                        "Could not pull image {:?}",
+                        &local_option.image
+                    )))
+                }
+            };
         }
         Action::Create => println!("Placeholder. Create container."),
     }

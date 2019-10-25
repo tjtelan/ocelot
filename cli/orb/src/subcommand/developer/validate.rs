@@ -23,10 +23,7 @@ pub fn subcommand_handler(
             Ok(_c) => Ok(()),
             Err(_e) => Err(SubcommandError::new("Config file failed validation")),
         }
-
-    }
-    else {
+    } else {
         Err(SubcommandError::new("No config file specified"))
     }
 }
-
