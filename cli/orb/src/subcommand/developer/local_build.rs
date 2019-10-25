@@ -39,7 +39,28 @@ pub fn subcommand_handler(
     // TODO: Will want ability to pass in any yaml.
     // TODO: Also handle file being named orb.yaml
     // Look for a file named orb.yml
-    let config = parser::load_orb_yaml(format!("{}{}", &local_option.path, "orb.yml"))?;
+    let config = parser::load_orb_yaml(format!("{}/{}", &local_option.path, "orb.yml"))?;
+
+    // writing this down so I don't forget.
+    // we probably still want to create containers with a PID 1 process that will live for a while. `sleep 2h`?
+
+    // docker create <image> sleep 2h
+    // <output container id>
+    // docker exec <container id> sh -c "<command>" (per list item)
+    
+    // Though, honestly we will want a way to reference the shell we want, as well as commands with container-level env vars
+    // We're going to still want to inject env vars into a build context
+    
+    // Logs are still unclear. Am I going to poll on output from the exec?
+    // <command> | tee -a /proc/1/fd/1 ?? This seems to give output in docker log, but not sure where the bounds of this are
+    // Checked that `tee` is installed in ubuntu, centos, alpine, clearlinux, busybox
+    // It seems that even if we're not root, we can print to /proc/1/fd/1
+
+    // Instead of piping to tee, try to get /bin/sh to "give" pid1's stdout/stderr to the exec process./prod/1/fd/1/ or /dev/stdout but we'll need to determine the fd for pid 1
+
+    for command in config.command.iter() {
+        println!("{:?}", command);
+    }
 
     Ok(())
 }

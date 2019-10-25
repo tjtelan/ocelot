@@ -2,12 +2,7 @@ extern crate structopt;
 use std::str::FromStr;
 use structopt::StructOpt;
 
-use shiplift::{
-    builder::ContainerFilter, tty::StreamType, ContainerListOptions, ContainerOptions, Docker,
-    ExecContainerOptions, PullOptions,
-};
-use tokio;
-use tokio::prelude::{Future, Stream};
+use container_builder::docker;
 
 use crate::{GlobalOption, SubcommandError};
 
@@ -40,28 +35,6 @@ impl FromStr for Action {
     }
 }
 
-fn container_pull(image: Option<String>) -> Result<(), ()> {
-    let docker = Docker::new();
-
-    let img = match image {
-        Some(i) => i,
-        None => "alpine:latest".to_string(),
-    };
-
-    println!("Pulling image: {}", img);
-
-    let img_pull = docker
-        .images()
-        .pull(&PullOptions::builder().image(img.clone()).build())
-        .for_each(|output| {
-            println!("{:?}", output);
-            Ok(())
-        })
-        .map_err(|e| eprintln!("Error: {}", e));
-    Ok(tokio::run(img_pull))
-    //Ok(())
-}
-
 pub fn subcommand_handler(
     _global_option: GlobalOption,
     local_option: SubcommandOption,
@@ -70,7 +43,7 @@ pub fn subcommand_handler(
 
     match local_option.action {
         Action::Pull => {
-            container_pull(local_option.image);
+            docker::container_pull(local_option.image);
         }
         Action::Create => println!("Placeholder. Create container."),
     }
