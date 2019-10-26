@@ -42,6 +42,7 @@ pub fn subcommand_handler(
     // TODO: Will want ability to pass in any yaml.
     // TODO: Also handle file being named orb.yaml
     // Look for a file named orb.yml
+    debug!("Loading orb.yml from path {:?}", &local_option.path);
     let config = parser::load_orb_yaml(format!("{}/{}", &local_option.path, "orb.yml"))?;
 
     // writing this down so I don't forget.
@@ -61,8 +62,9 @@ pub fn subcommand_handler(
 
     // Instead of piping to tee, try to get /bin/sh to "give" pid1's stdout/stderr to the exec process./prod/1/fd/1/ or /dev/stdout but we'll need to determine the fd for pid 1
 
-    match docker::container_pull(Some(config.image.clone())) {
-        Ok(e) => e,
+    debug!("Pulling container: {:?}", config.image.clone());
+    match docker::container_pull(&config.image[..]) {
+        Ok(ok) => ok, // The successful result doesn't matter
         Err(_) => {
             return Err(SubcommandError::new(&format!(
                 "Could not pull image {}",
@@ -71,6 +73,29 @@ pub fn subcommand_handler(
         }
     };
 
+    // Create a new container
+    debug!("Creating container");
+    let default_command_w_timeout = vec![
+        "/bin/sh",
+        "-c",
+        "sleep 2h",
+        "|",
+        "tee",
+        "-a",
+        "/proc/1/fd/1",
+    ];
+    match docker::container_create(&config.image[..], default_command_w_timeout) {
+        Ok(ok) => ok, // The successful result doesn't matter
+        Err(_) => {
+            return Err(SubcommandError::new(&format!(
+                "Could not create image {}",
+                &config.image
+            )))
+        }
+    };
+
+    // Exec into the new container
+    debug!("PLACEHOLDER: Attempting to exec into container");
     for command in config.command.iter() {
         println!("{:?}", command);
     }

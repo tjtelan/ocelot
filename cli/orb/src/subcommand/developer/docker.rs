@@ -13,6 +13,10 @@ pub struct SubcommandOption {
     #[structopt(long)]
     image: Option<String>,
 
+    /// command
+    #[structopt(long)]
+    command: Option<String>,
+
     /// Pull, Create
     action: Action,
 }
@@ -41,7 +45,9 @@ pub fn subcommand_handler(
 ) -> Result<(), SubcommandError> {
     match local_option.action {
         Action::Pull => {
-            match docker::container_pull(local_option.image.clone()) {
+            match docker::container_pull(
+                &local_option.image.clone().expect("No image provided")[..],
+            ) {
                 Ok(_) => return Ok(()),
                 Err(_) => {
                     return Err(SubcommandError::new(&format!(
@@ -51,7 +57,29 @@ pub fn subcommand_handler(
                 }
             };
         }
-        Action::Create => println!("Placeholder. Create container."),
+        Action::Create => {
+            let unwrapped_command = local_option.command.clone().expect("No command provided");
+
+            // FIXME
+            // This is going to be a stupid parsed command on whitespace only.
+            // Embedded commands with $() or backtics not expected to work with this parsing
+            let command_vec_slice: Vec<&str> = unwrapped_command.split_whitespace().collect();
+
+           match docker::container_create(
+                &local_option.image.clone().expect("No image provided")[..],
+                command_vec_slice,
+            ) {
+                Ok(container_id) => {
+                    println!("{}", container_id);
+                    return Ok(());
+                }
+                Err(_) => {
+                    return Err(SubcommandError::new(&format!(
+                        "Could not pull image {:?}",
+                        &local_option.image
+                    )))
+                }
+            };
+        }
     }
-    Ok(())
 }
