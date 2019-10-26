@@ -26,6 +26,9 @@ pub struct SubcommandOption {
 pub enum Action {
     Pull,
     Create,
+    Start,
+    Stop,
+    Exec,
 }
 
 impl FromStr for Action {
@@ -65,7 +68,7 @@ pub fn subcommand_handler(
             // Embedded commands with $() or backtics not expected to work with this parsing
             let command_vec_slice: Vec<&str> = unwrapped_command.split_whitespace().collect();
 
-           match docker::container_create(
+            match docker::container_create(
                 &local_option.image.clone().expect("No image provided")[..],
                 command_vec_slice,
             ) {
@@ -80,6 +83,19 @@ pub fn subcommand_handler(
                     )))
                 }
             };
+        }
+
+        Action::Start => {
+            //debug!("Placeholder. Start container");
+            Ok(())
+        }
+        Action::Stop => {
+            //debug!("Placeholder. Stop container");
+            Ok(())
+        }
+        Action::Exec => {
+            //debug!("Placeholder. Exec container");
+            Ok(())
         }
     }
 }

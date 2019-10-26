@@ -75,17 +75,10 @@ pub fn subcommand_handler(
 
     // Create a new container
     debug!("Creating container");
-    let default_command_w_timeout = vec![
-        "/bin/sh",
-        "-c",
-        "sleep 2h",
-        "|",
-        "tee",
-        "-a",
-        "/proc/1/fd/1",
-    ];
-    match docker::container_create(&config.image[..], default_command_w_timeout) {
-        Ok(ok) => ok, // The successful result doesn't matter
+    let default_command_w_timeout = vec!["sleep 2h"];
+    let container_id = match docker::container_create(&config.image[..], default_command_w_timeout)
+    {
+        Ok(container_id) => container_id,
         Err(_) => {
             return Err(SubcommandError::new(&format!(
                 "Could not create image {}",
@@ -94,11 +87,45 @@ pub fn subcommand_handler(
         }
     };
 
-    // Exec into the new container
-    debug!("PLACEHOLDER: Attempting to exec into container");
-    for command in config.command.iter() {
-        println!("{:?}", command);
+    // Start the new container
+
+    match docker::container_start(&container_id) {
+        Ok(container_id) => container_id,
+        Err(_) => {
+            return Err(SubcommandError::new(&format!(
+                "Could not start image {}",
+                &config.image
+            )))
+        }
     }
+
+    // TODO: Make sure tests try to exec w/o starting the container
+    // Exec into the new container
+    //debug!("Sending commands into container");
+    //for command in config.command.iter() {
+    //    // Build the exec string
+    //    let wrapped_command = format!("{} | tee -a /proc/1/fd/1", &command);
+
+    //    let container_command = vec![
+    //        "/bin/sh",
+    //        "-c",
+    //        wrapped_command.as_ref(),
+    //    ];
+
+    //    match docker::container_exec(container_id.as_ref(), container_command.clone()) {
+    //        Ok(output) => {
+    //            debug!("Command: {:?}", &command);
+    //            debug!("Output: {:?}", &output);
+    //            output
+    //        }
+    //        Err(_) => {
+    //            return Err(SubcommandError::new(&format!(
+    //                "Could not create image {}",
+    //                &config.image
+    //            )))
+    //        }
+    //    }
+    //}
 
     Ok(())
 }

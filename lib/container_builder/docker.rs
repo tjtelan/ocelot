@@ -79,3 +79,67 @@ pub fn container_create(image: &str, command: Vec<&str>) -> Result<String, ()> {
 
     Ok(container.id)
 }
+
+pub fn container_start(container_id: &str) -> Result<(), ()> {
+    let docker = Docker::new();
+
+    let start_container = docker
+        .containers()
+        .get(&container_id)
+        .start()
+        .map(|info| {
+            println!("{:?}", info);
+            info
+        })
+        .map_err(|e| eprintln!("Error: {}", e));
+    tokio::run(start_container);
+
+    Ok(())
+}
+
+pub fn container_stop(container_id: &str) -> Result<(), ()> {
+    let docker = Docker::new();
+        let stop_container = docker
+        .containers()
+        .get(&container_id)
+        .stop(None)
+        .map(|info| {
+            println!("{:?}", info);
+            info
+        })
+        .map_err(|e| eprintln!("Error: {}", e));
+    tokio::run(stop_container);
+    Ok(())
+}
+
+pub fn container_exec(container_id: &str, command: Vec<&str>) -> Result<(), ()> {
+    let docker = Docker::new();
+
+    println!("{:?}", command);
+    // FYI: This might not work until https://github.com/softprops/shiplift/issues/155 is fixed
+    println!("Executing commands in the container");
+    let options = ExecContainerOptions::builder()
+        .cmd(command)
+        //.env(vec!["VAR=value"])
+        .attach_stdout(true)
+        .attach_stderr(true)
+        .build();
+
+    let exec_container = docker
+        .containers()
+        .get(&container_id)
+        .exec(&options)
+        .for_each(|chunk| {
+            match chunk.stream_type {
+                StreamType::StdOut => print!("Stdout: {}", chunk.as_string_lossy()),
+                StreamType::StdErr => eprintln!("Stderr: {}", chunk.as_string_lossy()),
+                StreamType::StdIn => unreachable!(),
+            }
+            Ok(())
+        })
+        .map_err(|e| eprintln!("Error: {}", e));
+
+    tokio::run(exec_container);
+
+    Ok(())
+}
