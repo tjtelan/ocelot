@@ -9,6 +9,8 @@ edition = "2018"
 [dependencies]
 shiplift = "0.5"
 tokio = "0.1"
+log = "0.4"
+env_logger = "0.7"
 
 [lib]
 name = "container_builder"

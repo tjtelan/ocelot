@@ -5,6 +5,8 @@ use config_parser::parser;
 use container_builder::docker;
 use git_meta::git_info;
 
+use log::debug;
+
 use crate::{GlobalOption, SubcommandError};
 
 #[derive(Debug, StructOpt)]
@@ -31,8 +33,8 @@ pub fn subcommand_handler(
     // Read options and validate against git repo
     // Read orb.yml
 
-    println!(
-        "Git path: {:?}\nInfo: {:?}",
+    debug!(
+        "Git info at path ({:?}): {:?}",
         &local_option.path[..],
         git_info::get_git_info_from_path(&local_option.path[..], &None, &None)
     );

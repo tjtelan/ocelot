@@ -9,6 +9,8 @@ edition = "2018"
 [dependencies]
 serde = "1.0"
 serde_yaml = "0.8"
+log = "0.4"
+env_logger = "0.7"
 
 [lib]
 name = "config_parser"

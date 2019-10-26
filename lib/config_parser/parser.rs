@@ -1,3 +1,4 @@
+use log::debug;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -10,8 +11,7 @@ pub fn load_orb_yaml(path: String) -> Result<OrbitalConfig, Box<dyn std::error::
     let f = std::fs::File::open(path)?;
     let parsed: OrbitalConfig = serde_yaml::from_reader(&f)?;
 
-    // TODO: Place this behind a debug flag
-    //println!("{:?}", parsed);
+    debug!("{:?}", parsed);
 
     Ok(parsed)
 }

@@ -6,6 +6,8 @@ use std::io;
 use subcommand::{self, GlobalOption, Subcommand, SubcommandContext, SubcommandError};
 
 fn main() -> Result<(), SubcommandError> {
+    env_logger::init();
+
     let parsed = SubcommandContext::from_args();
 
     // Pass to the subcommand handlers
