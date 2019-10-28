@@ -15,18 +15,20 @@ Vagrant.configure("2") do |config|
     type: "virtualbox",
     disabled: false
 
-  config.vm.provision "shell", inline: <<-SHELL
-    apt-get update
-    apt-get install -y curl git pkg-config libssl-dev build-essential
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    sudo apt-get update
+    sudo apt-get install -y curl git pkg-config libssl-dev build-essential
+
+    # Install docker via get docker script
+    curl -fsSL https://get.docker.com | sudo sh
+    sudo usermod -aG docker vagrant
+
     # Install rust via rustup script
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    echo -n 'export PATH=${HOME}/.cargo/bin:${PATH}' >> ~/.bashrc
-    # Configure current session to add cargo to path
+    #echo -n 'export PATH=/home/vagrant/.cargo/bin:${PATH}' >> /home/vagrant/.bashrc
+    ## Configure current session to add cargo to path
     source $HOME/.cargo/env
-    # Install docker via get docker script
-    curl -fsSL https://get.docker.com | sh
-    usermod -aG docker vagrant
-    # Compile orb
+    ## Compile orb
     pushd orbitalci
     make
   SHELL
