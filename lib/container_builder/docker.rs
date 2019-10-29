@@ -56,7 +56,7 @@ pub fn container_create(image: &str, command: Vec<&str>) -> Result<String, ()> {
         .attach_stdout(true)
         .attach_stderr(true)
         .working_dir("/code")
-        .volumes(vec!["/var/run/docker.sock:/var/run/docker.sock", "/home/telant/Documents/orbitalci:/code"])
+        .volumes(vec!["/var/run/docker.sock:/var/run/docker.sock", "/home/vagrant/orbitalci:/code"])
         .cmd(command)
         .build();
 
