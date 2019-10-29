@@ -45,6 +45,7 @@ pub fn container_pull(image: &str) -> Result<(), ()> {
     Ok(tokio::run(img_pull))
 }
 
+/// FIXME: Leaving hardcoded volumes, so this might break on another machine. Need to parameterize the source code path
 /// Returns the id of the container that is created
 pub fn container_create(image: &str, command: Vec<&str>) -> Result<String, ()> {
     let docker = Docker::new();
@@ -54,6 +55,8 @@ pub fn container_create(image: &str, command: Vec<&str>) -> Result<String, ()> {
         //.name("test-container-name")
         .attach_stdout(true)
         .attach_stderr(true)
+        .working_dir("/code")
+        .volumes(vec!["/var/run/docker.sock:/var/run/docker.sock", "/home/telant/Documents/orbitalci:/code"])
         .cmd(command)
         .build();
 

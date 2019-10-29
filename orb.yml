@@ -1,4 +1,6 @@
 image: docker
 command:
   - echo Hello world!
+  - pwd
+  - ls
   - docker build -t orb .

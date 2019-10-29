@@ -12,7 +12,6 @@ clap = "2.33"
 container_builder = { path = "../../../../lib/container_builder" }
 config_parser = { path = "../../../../lib/config_parser" }
 git_meta = { path = "../../../../lib/git_meta" }
-shiplift = "0.5"
 tokio = "0.1.22"
 orbital_headers = { path = "../../../../models/orbital_headers" }
 orbital_services = { path = "../../../../services" }
