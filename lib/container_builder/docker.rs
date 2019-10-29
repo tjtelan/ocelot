@@ -42,6 +42,7 @@ pub fn container_pull(image: &str) -> Result<(), ()> {
     Ok(tokio::run(img_pull))
 }
 
+/// FIXME: Leaving hardcoded volumes, so this might break on another machine. Need to parameterize the source code path
 /// Returns the id of the container that is created
 /// Currently assumes that source code gets mounted in container's /orbital-work directory
 pub fn container_create(
