@@ -83,6 +83,8 @@ pub fn container_create(image: &str, command: Vec<&str>) -> Result<String, ()> {
 pub fn container_start(container_id: &str) -> Result<(), ()> {
     let docker = Docker::new();
 
+    debug!("Starting the container");
+
     let start_container = docker
         .containers()
         .get(&container_id)

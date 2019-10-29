@@ -25,7 +25,6 @@ Vagrant.configure("2") do |config|
 
     # Install rust via rustup script
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    #echo -n 'export PATH=/home/vagrant/.cargo/bin:${PATH}' >> /home/vagrant/.bashrc
     ## Configure current session to add cargo to path
     source $HOME/.cargo/env
     ## Compile orb
