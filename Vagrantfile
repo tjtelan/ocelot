@@ -5,9 +5,9 @@ Vagrant.configure("2") do |config|
   config.vm.box = "generic/ubuntu1804"
 
   # config.vm.network "forwarded_port", guest: 80, host: 8080
-  # config.vm.provider "virtualbox" do |vb|
-  #   vb.memory = "1024"
-  # end
+  config.vm.provider "virtualbox" do |vb|
+    vb.cpu = "2"
+  end
 
   #config.ssh.username = 'ubuntu'
 

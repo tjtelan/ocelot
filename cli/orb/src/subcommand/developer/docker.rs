@@ -71,6 +71,8 @@ pub fn subcommand_handler(
             match docker::container_create(
                 &local_option.image.clone().expect("No image provided")[..],
                 command_vec_slice,
+                None,
+                None,
             ) {
                 Ok(container_id) => {
                     println!("{}", container_id);
