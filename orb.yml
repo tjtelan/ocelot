@@ -3,4 +3,5 @@ command:
   - echo Hello world!
   - pwd
   - ls
+  - env
   - docker build -t orb .

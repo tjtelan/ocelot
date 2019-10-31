@@ -14,16 +14,19 @@ use std::env;
 //static CURRENT_DIRECTORY : String = env::var("PWD").unwrap_or(".".to_string());
 
 #[derive(Debug, StructOpt)]
-#[structopt(rename_all = "keb
-ab_case")]
+#[structopt(rename_all = "kebab_case")]
 pub struct SubcommandOption {
     /// Path to local repo. Defaults to current working directory
     #[structopt(long)]
     path: Option<String>,
 
-    /// Add env vars to build. Comma-separated with no spaces. ex. "key1=var1,key2,var2"
-    #[structopt(long)]
+    /// Add env vars to build. Comma-separated with no spaces. ex. "key1=var1,key2=var2"
+    #[structopt(long, short)]
     env: Option<String>,
+
+    /// Add volume mapping from host to container. Comma-separated with no spaces. ex. "/host/path1:/container/path1,/host/path2:/container/path2"
+    #[structopt(long, short)]
+    volume: Option<String>,
 
     /// Use the specified local branch
     #[structopt(long)]
@@ -32,6 +35,18 @@ pub struct SubcommandOption {
     /// Use the specified commit hash
     #[structopt(long)]
     hash: Option<String>,
+}
+
+/// Returns an Option<Vec<&str>> after parsing a comma-separated KEY=VALUE string map from the cli
+fn kv_csv_parser(kv_str: &Option<String>) -> Option<Vec<&str>> {
+    debug!("Parsing Option<String> input: {:?}", &kv_str);
+    match kv_str {
+        Some(n) => {
+            let kv_vec: Vec<&str> = n.split(",").collect();
+            return Some(kv_vec);
+        }
+        None => return None,
+    }
 }
 
 pub fn subcommand_handler(
@@ -44,23 +59,18 @@ pub fn subcommand_handler(
     // If a path isn't given, then use the current working directory based on env var PWD
     let path = &local_option
         .path
-        .unwrap_or(env::var("PWD").unwrap_or(".".to_string()));
+        .unwrap_or(env::var("PWD").unwrap_or_default());
 
-    // Probably wrap this in a helper function
-    let env_str = &local_option
-        .env
-        .unwrap_or("".to_string());
-
-    let env_vec : Vec<&str> = env_str.split(",").collect();
-    let envs_param = match env_vec.len() {
-        0 => {
-            debug!("No env vars provided");
-            None
-        },
-        _ => {
-            debug!("Env var string: {:?}", &env_vec);
-            Some(env_vec)
-        },
+    const DOCKER_SOCKET_VOLMAP: &str = "/var/run/docker.sock:/var/run/docker.sock";
+    let envs_vec = kv_csv_parser(&local_option.env);
+    let vols_vec = match kv_csv_parser(&local_option.volume) {
+        Some(v) => {
+            let mut new_vec: Vec<&str> = Vec::new();
+            new_vec.push(DOCKER_SOCKET_VOLMAP);
+            new_vec.extend(v.clone());
+            Some(new_vec)
+        }
+        None => Some(vec![DOCKER_SOCKET_VOLMAP]),
     };
 
     debug!(
@@ -89,16 +99,20 @@ pub fn subcommand_handler(
     // Create a new container
     debug!("Creating container");
     let default_command_w_timeout = vec!["sleep", "2h"];
-    let container_id =
-        match docker::container_create(&config.image[..], default_command_w_timeout, envs_param, None) {
-            Ok(container_id) => container_id,
-            Err(_) => {
-                return Err(SubcommandError::new(&format!(
-                    "Could not create image {}",
-                    &config.image
-                )))
-            }
-        };
+    let container_id = match docker::container_create(
+        &config.image[..],
+        default_command_w_timeout,
+        envs_vec,
+        vols_vec,
+    ) {
+        Ok(container_id) => container_id,
+        Err(_) => {
+            return Err(SubcommandError::new(&format!(
+                "Could not create image {}",
+                &config.image
+            )))
+        }
+    };
 
     // Start the new container
 

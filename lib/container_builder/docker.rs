@@ -1,7 +1,4 @@
-use shiplift::{
-    builder::ContainerFilter, tty::StreamType, ContainerListOptions, ContainerOptions, Docker,
-    ExecContainerOptions, PullOptions,
-};
+use shiplift::{tty::StreamType, ContainerOptions, Docker, ExecContainerOptions, PullOptions};
 
 use tokio;
 use tokio::prelude::{Future, Stream};
@@ -45,8 +42,8 @@ pub fn container_pull(image: &str) -> Result<(), ()> {
     Ok(tokio::run(img_pull))
 }
 
-/// FIXME: Leaving hardcoded volumes, so this might break on another machine. Need to parameterize the source code path
 /// Returns the id of the container that is created
+/// Currently assumes that source code gets mounted in container's /orbital-work directory
 pub fn container_create(
     image: &str,
     command: Vec<&str>,
@@ -55,20 +52,16 @@ pub fn container_create(
 ) -> Result<String, ()> {
     let docker = Docker::new();
 
-    // We're always going to want this in the container for docker-in-docker building
-    let docker_socket_vol = "/var/run/docker.sock:/var/run/docker.sock";
-
-    let mut volume_vec = vec![docker_socket_vol];
-    //volume_vec.append(docker_socket_vol);
-
-    volume_vec.append(&mut vols.unwrap_or_default());
+    let env_vec: Vec<&str> = envs.unwrap_or_default();
+    let volume_vec: Vec<&str> = vols.unwrap_or_default();
 
     // TODO: Need a naming convention
     let container_spec = ContainerOptions::builder(image)
         //.name("test-container-name")
         .attach_stdout(true)
         .attach_stderr(true)
-        .working_dir("/code")
+        .working_dir("/orbital-work")
+        .env(env_vec)
         .volumes(volume_vec)
         .cmd(command)
         .build();
@@ -138,7 +131,6 @@ pub fn container_exec(container_id: &str, command: Vec<&str>) -> Result<(), ()> 
     println!("Executing commands in the container");
     let options = ExecContainerOptions::builder()
         .cmd(command)
-        //.env(vec!["VAR=value"])
         .attach_stdout(true)
         .attach_stderr(true)
         .build();
@@ -149,8 +141,8 @@ pub fn container_exec(container_id: &str, command: Vec<&str>) -> Result<(), ()> 
         .exec(&options)
         .for_each(|chunk| {
             match chunk.stream_type {
-                StreamType::StdOut => print!("Stdout: {}", chunk.as_string_lossy()),
-                StreamType::StdErr => eprintln!("Stderr: {}", chunk.as_string_lossy()),
+                StreamType::StdOut => print!("{}", chunk.as_string_lossy()),
+                StreamType::StdErr => eprintln!("{}", chunk.as_string_lossy()),
                 StreamType::StdIn => unreachable!(),
             }
             Ok(())

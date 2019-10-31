@@ -4,7 +4,7 @@
 
 use git2::{Branch, BranchType, Commit, ObjectType, Repository};
 
-use log::{debug, info};
+use log::debug;
 
 pub fn get_local_repo_from_path(path: &str) -> Result<Repository, git2::Error> {
     Repository::open(path)
