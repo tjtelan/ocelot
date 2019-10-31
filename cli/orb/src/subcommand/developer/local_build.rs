@@ -9,10 +9,6 @@ use log::debug;
 
 use crate::{GlobalOption, SubcommandError};
 
-use std::env;
-
-//static CURRENT_DIRECTORY : String = env::var("PWD").unwrap_or(".".to_string());
-
 #[derive(Debug, StructOpt)]
 #[structopt(rename_all = "kebab_case")]
 pub struct SubcommandOption {
@@ -37,18 +33,6 @@ pub struct SubcommandOption {
     hash: Option<String>,
 }
 
-/// Returns an Option<Vec<&str>> after parsing a comma-separated KEY=VALUE string map from the cli
-fn kv_csv_parser(kv_str: &Option<String>) -> Option<Vec<&str>> {
-    debug!("Parsing Option<String> input: {:?}", &kv_str);
-    match kv_str {
-        Some(n) => {
-            let kv_vec: Vec<&str> = n.split(",").collect();
-            return Some(kv_vec);
-        }
-        None => return None,
-    }
-}
-
 pub fn subcommand_handler(
     _global_option: GlobalOption,
     local_option: SubcommandOption,
@@ -57,26 +41,15 @@ pub fn subcommand_handler(
     // Read orb.yml
 
     // If a path isn't given, then use the current working directory based on env var PWD
-    let path = &local_option
-        .path
-        .unwrap_or(env::var("PWD").unwrap_or_default());
+    let path = &local_option.path.unwrap_or(super::get_current_workdir());
 
-    const DOCKER_SOCKET_VOLMAP: &str = "/var/run/docker.sock:/var/run/docker.sock";
-    let envs_vec = kv_csv_parser(&local_option.env);
-    let vols_vec = match kv_csv_parser(&local_option.volume) {
-        Some(v) => {
-            let mut new_vec: Vec<&str> = Vec::new();
-            new_vec.push(DOCKER_SOCKET_VOLMAP);
-            new_vec.extend(v.clone());
-            Some(new_vec)
-        }
-        None => Some(vec![DOCKER_SOCKET_VOLMAP]),
-    };
+    let envs_vec = super::parse_envs_input(&local_option.env);
+    let vols_vec = super::parse_volumes_input(&local_option.volume);
 
     debug!(
         "Git info at path ({:?}): {:?}",
         &path,
-        git_info::get_git_info_from_path(&path[..], &None, &None)
+        git_info::get_git_info_from_path(path.as_str(), &None, &None)
     );
 
     // TODO: Will want ability to pass in any yaml.
@@ -86,7 +59,7 @@ pub fn subcommand_handler(
     let config = parser::load_orb_yaml(format!("{}/{}", &path, "orb.yml"))?;
 
     debug!("Pulling container: {:?}", config.image.clone());
-    match docker::container_pull(&config.image[..]) {
+    match docker::container_pull(config.image.as_str()) {
         Ok(ok) => ok, // The successful result doesn't matter
         Err(_) => {
             return Err(SubcommandError::new(&format!(
@@ -100,7 +73,7 @@ pub fn subcommand_handler(
     debug!("Creating container");
     let default_command_w_timeout = vec!["sleep", "2h"];
     let container_id = match docker::container_create(
-        &config.image[..],
+        config.image.as_str(),
         default_command_w_timeout,
         envs_vec,
         vols_vec,

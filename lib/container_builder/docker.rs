@@ -127,7 +127,7 @@ pub fn container_exec(container_id: &str, command: Vec<&str>) -> Result<(), ()> 
     let docker = Docker::new();
 
     println!("{:?}", command);
-    // FYI: This might not work until https://github.com/softprops/shiplift/issues/155 is fixed
+    // FYI: This might not work on MacOS hosts until https://github.com/softprops/shiplift/issues/155 is fixed
     println!("Executing commands in the container");
     let options = ExecContainerOptions::builder()
         .cmd(command)
