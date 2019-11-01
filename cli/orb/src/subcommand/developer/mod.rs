@@ -5,6 +5,7 @@ use crate::{GlobalOption, SubcommandError};
 use log::debug;
 use std::env;
 
+use container_builder;
 pub mod docker;
 pub mod git;
 pub mod local_build;
@@ -23,32 +24,51 @@ pub enum DeveloperType {
     Validate(validate::SubcommandOption),
 }
 
-const DOCKER_SOCKET_VOLMAP: &str = "/var/run/docker.sock:/var/run/docker.sock";
-
 pub fn get_current_workdir() -> String {
     let path = match env::current_dir() {
         Ok(d) => format!("{}", d.display()),
-
         Err(_) => String::from("."),
     };
 
+    debug!("Current workdir on host: {}", &path);
     path
 }
 
 pub fn parse_envs_input(user_input: &Option<String>) -> Option<Vec<&str>> {
-    kv_csv_parser(user_input)
+    let envs = kv_csv_parser(user_input);
+    debug!("Env vars to set: {:?}", envs);
+    envs
 }
 
+// Automatically add in the docker socket. If we don't pass in any other volumes
+// assume passing in the current working directory as well
 pub fn parse_volumes_input(user_input: &Option<String>) -> Option<Vec<&str>> {
-    match kv_csv_parser(user_input) {
+    let vols = match kv_csv_parser(user_input) {
         Some(v) => {
             let mut new_vec: Vec<&str> = Vec::new();
-            new_vec.push(DOCKER_SOCKET_VOLMAP);
+            new_vec.push(container_builder::DOCKER_SOCKET_VOLMAP);
             new_vec.extend(v.clone());
             Some(new_vec)
         }
-        None => Some(vec![DOCKER_SOCKET_VOLMAP]),
-    }
+        None => {
+            let mut new_vec: Vec<&str> = Vec::new();
+            new_vec.push(container_builder::DOCKER_SOCKET_VOLMAP);
+
+            // There's got to be a better way to handle this...
+            // https://stackoverflow.com/a/30527289/1672638
+            new_vec.push(Box::leak(
+                format!(
+                    "{}:{}",
+                    get_current_workdir(),
+                    container_builder::ORBITAL_CONTAINER_WORKDIR,
+                )
+                .into_boxed_str(),
+            ));
+            Some(new_vec)
+        }
+    };
+    debug!("Volumes to mount: {:?}", &vols);
+    vols
 }
 
 /// Returns an Option<Vec<&str>> after parsing a comma-separated KEY=VALUE string map from the cli

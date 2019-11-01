@@ -53,14 +53,16 @@ pub fn container_create(
     let docker = Docker::new();
 
     let env_vec: Vec<&str> = envs.unwrap_or_default();
+    debug!("Adding env vars: {:?}", env_vec);
     let volume_vec: Vec<&str> = vols.unwrap_or_default();
+    debug!("Adding volume mounts: {:?}", volume_vec);
 
     // TODO: Need a naming convention
     let container_spec = ContainerOptions::builder(image)
         //.name("test-container-name")
         .attach_stdout(true)
         .attach_stderr(true)
-        .working_dir("/orbital-work")
+        .working_dir(super::ORBITAL_CONTAINER_WORKDIR)
         .env(env_vec)
         .volumes(volume_vec)
         .cmd(command)
